@@ -107,6 +107,25 @@ a{color:inherit;text-decoration:inherit}button{font:inherit}svg,img{display:bloc
   .say-note{ font-size:.9rem; font-weight:600; color:#15803d; }
   .say-foot{ margin:1.4rem 0 0; font-size:.88rem; color:#6b7280; line-height:1.8; }
   .say-foot a{ color:#5b21b6; }
+  /* ---------- Downloads ---------- */
+  .dl{ display:flex; flex-wrap:wrap; gap:1.6rem; padding:1.5rem; align-items:flex-start; }
+  .dl-thumb{ flex:0 0 200px; display:block; height:300px; overflow:hidden; border-radius:.7rem;
+    border:1px solid #e5e7eb; box-shadow:0 2px 8px rgba(0,0,0,.08); transition:transform .2s ease, box-shadow .2s ease; }
+  .dl-thumb:hover{ transform:translateY(-3px); box-shadow:0 8px 18px rgba(0,0,0,.14); }
+  .dl-thumb img{ display:block; width:100%; height:auto; }
+  .dl-body{ flex:1 1 260px; display:flex; flex-direction:column; gap:.55rem; }
+  .dl-tag{ margin:0; font-size:.8rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0e7490; }
+  .dl-title{ margin:0; font-size:1.25rem; font-weight:600; line-height:1.35; }
+  .dl-desc{ margin:0; color:#4b5563; line-height:1.7; }
+  .dl-zh{ font-size:.95rem; }
+  .dl-meta{ margin:0; font-size:.85rem; color:#6b7280; }
+  .dl-btns{ display:flex; flex-wrap:wrap; gap:.6rem; margin-top:.4rem; }
+  .dl-btn{ display:inline-block; font-weight:600; font-size:.95rem; text-decoration:none; color:#374151;
+    background:#fff; border:2px solid #d1d5db; border-radius:999px; padding:.5rem 1.3rem; transition:background .2s ease, transform .2s ease; }
+  .dl-btn:hover{ background:#f3f4f6; transform:translateY(-2px); }
+  .dl-btn.primary{ background:#5b21b6; border-color:#5b21b6; color:#fff; }
+  .dl-btn.primary:hover{ background:#4c1d95; }
+  @media (max-width:520px){ .dl-thumb{ flex-basis:100%; height:260px; } }
   .lift{ transition:transform .25s ease, box-shadow .25s ease; }
   .lift:hover,.lift:focus-within{ transform:translateY(-6px); box-shadow:0 16px 32px rgba(17,24,39,.18); }
   @media (prefers-reduced-motion: reduce){ .lift{ transition:box-shadow .25s ease; } .lift:hover,.lift:focus-within{ transform:none; } }
@@ -163,7 +182,23 @@ a{color:inherit;text-decoration:inherit}button{font:inherit}svg,img{display:bloc
   <section id="sec-overview" class="blk"><h2 class="blk-t">Project Overview</h2><div id="gMot" class="overview-grid"></div></section>
   <section id="sec-lessons" class="blk"><h2 class="blk-t">Lesson Plans</h2><div id="gLes" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div></section>
   <section id="sec-tools" class="blk"><h2 class="blk-t">Interactive Tools</h2><div id="gTools" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div></section>
-  <section id="sec-files" class="blk"><h2 class="blk-t">Downloads</h2><div class="card p-6"><p class="text-gray-600">No files yet. 目前還沒有可下載的檔案。</p></div></section>
+  <section id="sec-files" class="blk"><h2 class="blk-t">Downloads</h2>
+    <div class="card dl">
+      <a class="dl-thumb" href="files/poster.pdf" target="_blank" rel="noopener" aria-label="Open the poster PDF">
+        <img src="files/poster-preview.jpg" alt="Poster: Integrating Music and Language Acquisition Through Picture Book" loading="lazy" width="640" height="1706">
+      </a>
+      <div class="dl-body">
+        <p class="dl-tag">Poster · 海報</p>
+        <h3 class="dl-title">Integrating Music and Language Acquisition Through Picture Book</h3>
+        <p class="dl-desc">One-page overview of the project: motivation, background, approach, the four-step lesson plan framework and expected outcomes.<br><span class="dl-zh">專案總覽海報：動機、背景、教學方法、四步驟教案架構與預期成果。</span></p>
+        <p class="dl-meta">PDF · 2 MB</p>
+        <div class="dl-btns">
+          <a class="dl-btn primary" href="files/poster.pdf" target="_blank" rel="noopener">查看 View</a>
+          <a class="dl-btn" href="files/poster.pdf" download="Duohua-Wang-poster.pdf">下載 Download</a>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <section id="sec-say" class="blk">
     <h2 class="blk-t">Want to say?</h2>
