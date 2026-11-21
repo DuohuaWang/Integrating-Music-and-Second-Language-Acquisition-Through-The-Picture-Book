@@ -81,7 +81,11 @@
           <section class="panel">
     <h2>整句練習 Whole sentence</h2>
     <input id="sent" type="text" placeholder="He ate a green apple." autocomplete="off" aria-label="整句 Whole sentence">
-    <p class="hint">打一整句：重音踩在拍點上，輕音擠進拍子裡。<br>Type a sentence — stressed syllables land on the beat; light syllables squeeze in between.</p>
+    <div class="segs" id="modeseg" role="group" aria-label="節奏方式 Rhythm mode" style="margin-top:.8rem">
+      <button class="seg" type="button" data-m="practice">🥁 節奏練習：一個字一拍</button>
+      <button class="seg" type="button" data-m="natural">🗣️ 自然語調：一個重音一拍</button>
+    </div>
+    <p class="hint" id="modehint"></p>
   </section>
     <section>
     <div id="count" class="hint" style="margin-bottom:.6rem"></div>
@@ -124,50 +128,22 @@ function shortOne(w){
   const long=/[aeiou][^aeiouy]e$/.test(w)||/(ai|ay|ee|ea|oa|ou|ow|oo|oi|oy|ie|ue|ui|au|aw|igh|eau)/.test(w)||/[aeiouy]r/.test(w)||/[aeiouy]$/.test(w);
   return !long;
 }
-/* ===== 節奏規則：重音計時（單字和整句共用同一套）============================
-   1. 重音音節永遠落在拍點上：一個重音 = 一拍。
-   2. 兩個重音之間的輕音節，全部擠進前一拍，不留多餘的休止符：
-      一拍裡 1 個音節 ♩（短母音的單音節字是 ♪𝄾，例如 pear）、2 個 ♫、3 個 ♪♬♬、4 個 ♬♬♬♬。
-   3. 第一個重音前面的輕音節是弱起拍，輕輕帶過：1 個 ♪、2 個 ♫、3 個 ♪♬♬。
-      例如 com-PU-ter → com ♪ | PU-ter ♫；I have a computer → I ♪ | HAVE a com ♪♬♬ | PU-ter ♫
-   4. 圖卡上的字（apple、orange…）自己成一拍時，照圖卡的節奏（例如 orange ♪.♬）。 */
-const GROUP_R = {1:'q', 2:'ee', 3:'ess', 4:'ssss'};
-const LEAD_R  = {1:'e', 2:'ee', 3:'ess', 4:'ssss'};
-function beatRhythm(syls){
-  const n = syls.length, w = syls[0].w;
-  if(syls.every(s=>s.w===w) && w.syl.length===n && META[w.key]) return META[w.key];   // 圖卡上的字
-  if(n===1) return (w.syl.length===1 && shortOne(w.key)) ? 'er' : 'q';               // 一拍只有一個音節
-  return GROUP_R[n] || 's'.repeat(n);
+/* 一個字一拍。多音節的字依「重音在第幾個音節」分配，重音音節永遠拿最長的音：
+   2 音節：重音在前 ♫（A-pple），重音在後 ♬♪.（gui-TAR）
+   3 音節：重音第 1 個 ♪♬♬（CHOC-o-late）、第 2 個 ♬♪♬（com-PU-ter）、第 3 個 ♬♬♪（kan-ga-ROO）
+   4 音節以上：全部十六分音符，重音用粗體標示 */
+function defRhythm(n,word,stress){
+  stress = stress||0;
+  if(n===1) return shortOne(word||'') ? 'er' : 'q';
+  if(n===2) return stress===1 ? 'sd' : 'ee';
+  if(n===3) return ['ess','ses','sse'][Math.min(stress,2)];
+  return 's'.repeat(n);
 }
-// words：[{ key, syl:[音節…], stress: 重音在第幾個音節（虛詞用 -1，整個字都輕） }]
-function stressTimed(words){
-  const S = [];
-  words.forEach(w => w.syl.forEach((t,i) => S.push({ t, w, i, str: w.stress===i })));
-  if(!S.length) return null;
-  if(!S.some(s=>s.str)){                         // 整句都是輕音（例如只打 I am）：最後一個字當重音
-    const last = words[words.length-1], k = Math.max(0, last.stress);
-    S.find(s=>s.w===last && s.i===k).str = true;
-  }
-  const first = S.findIndex(s=>s.str), groups = [];
-  if(first>0){ const lead = S.slice(0,first); groups.push({ syls:lead, r: LEAD_R[lead.length] || 's'.repeat(lead.length), lead:true }); }
-  for(let i=first; i<S.length; ){
-    let j=i+1; while(j<S.length && !S[j].str) j++;
-    const syls = S.slice(i,j); groups.push({ syls, r: beatRhythm(syls), lead:false }); i=j;
-  }
-  const r = groups.map(g=>g.r).join('|');
-  const acc = [];                                 // 每個符號是不是重音（播放時重音比較高、比較大聲）
-  groups.forEach((g,gi)=>{ if(gi>0) acc.push(false); let n=0;
-    [...g.r].forEach(k=>{ if(k==='r'){ acc.push(false); return; } const s=g.syls[n++]; acc.push(!!(s && s.str)); }); });
-  const leadLen = groups[0].lead ? groups[0].r.length + 1 : 0;   // 弱起拍佔前面幾個符號（含 '|'）
-  return { r, acc, groups, leadLen };
-}
-function wordRhythm(key, syl, stress){ return stressTimed([{ key, syl, stress }]); }   // 單一個字
 function parse(w){
   const parts = w.split('-'); let stress = 0;
   const syl = parts.map((p,i)=>{ if(p.startsWith('^')){ stress=i; p=p.slice(1);} return p.replace(/~/g,' '); });
   const key = syl.join('').toLowerCase().replace(/\s+/g,'');
-  const wr = wordRhythm(key, syl, stress);
-  return { syl, stress, key, r: wr.r, lead: wr.leadLen, acc: wr.acc, bg: PICS[key]?PICS[key].bg:'#f6d092', img: PICS[key]?PICS[key].src:'', emoji: EMO[key]||'' };
+  return { syl, stress, key, r: META[key] || defRhythm(syl.length,key,stress), bg: PICS[key]?PICS[key].bg:'#f6d092', img: PICS[key]?PICS[key].src:'', emoji: EMO[key]||'' };
 }
 const ITEMS = WORDS.map(parse);
 
@@ -289,9 +265,7 @@ function syllabifyRule(word){
 function autoItem(v){
   const syl=[]; v.split(/\s+/).filter(Boolean).forEach(x=>syl.push(...syllabify(x)));
   if(!syl.length) return null;
-  const key = keyOf(v), stress = v.trim().split(/\s+/).length===1 ? stressOf(v,syl.length) : 0;
-  const wr = wordRhythm(key, syl, stress);
-  return { word:v, syl, stress, key, r: wr.r, lead: wr.leadLen, acc: wr.acc, bg:'#f6d092', img:'', emoji:'', cap:'自動辨識 Auto-detected' };
+  return { word:v, syl, stress:(v.trim().split(/\s+/).length===1?stressOf(v,syl.length):0), key:'', r:defRhythm(syl.length,syl.join(''),(v.trim().split(/\s+/).length===1?stressOf(v,syl.length):0)), bg:'#f6d092', img:'', emoji:'', cap:'自動辨識 Auto-detected' };
 }
 let filterR = '';
 const chips=document.getElementById('chips'), res=document.getElementById('results'), q=document.getElementById('q'), count=document.getElementById('count');
@@ -321,51 +295,84 @@ function articleFor(word){
 }
 function withArticle(it){                 // 回傳「加好冠詞」的版本，原本那一筆不動
   if(!ARTICLE) return it;
-  const word = it.word || it.syl.join('');
-  const art = articleFor(word);
+  const art = articleFor(it.word || it.syl.join(''));
   if(!art) return it;
-  // 冠詞不重讀，跟單字一起丟進同一套規則：冠詞變成弱起拍，重音還是落在拍點上
-  const st = stressTimed([{ key:art, syl:[art], stress:-1 }, { key: it.key || keyOf(word), syl: it.syl, stress: it.stress }]);
   return Object.assign({}, it, {
-    r: st.r, lead: st.leadLen, acc: st.acc,
+    r: 're|' + it.r,                      // 八分休止 + 冠詞 + 間隔 + 原本的節奏
+    lead: 3,                              // 前三個符號是弱起拍
     stress: it.stress + 1,                // 重音跟著往後移
     syl: [art, ...it.syl],
     artCount: 1,                          // 開頭第幾個音節是冠詞（顯示時用淡色）
-    speak: art + ' ' + word               // 念出來的時候是「完整的字」
+    speak: art + ' ' + (it.word || it.syl.join(''))   // 念出來的時候是「完整的字」
   });
 }
 
 /* ===== 句子 Sentence ========================================================
-   用上面同一套「重音計時」規則：實詞的重音音節落在拍點上，
-   虛詞（冠詞、代名詞、be 動詞、助動詞、介系詞…）整個字都是輕音，擠進拍子裡。 */
+   規則：一個字一拍（四分音符）。字裡面的音節照單字規則分：
+   單音節長母音 ♩（cake、I）、單音節短母音 ♪𝄾（pear、am）、多音節照字典。
+   冠詞 a / an / the 和主詞 I / you / he / she / we / they 是弱起拍：
+   前面補半拍休止符，字出現在後半拍（𝄾♪），加起來還是一拍，
+   下一個字就會落在正拍上。 */
 const FUNC = new Set(('a an the and or but so if as of in on at to for with from by '+
   'i you he she it we they me him her us them my your his its our their '+
-  'is am are was were be been being do does did done '+
+  'is am are was were be been being do does did done has have had '+
   'will would can could shall should may might must '+
-  'this that these those there here not very too some any '+
+  'this that these those there here not no yes very too some any '+
   'through into onto after before than about around because while until since though although unless').split(' '));
+// 弱起拍：冠詞和主詞不重讀，用一個八分音符帶進後面的字，其他字都是一拍
+const ARTICLES = new Set(['a','an','the', 'i','you','he','she','we','they']);
 function wordPart(raw){
-  const clean = raw.replace(/[^A-Za-z']/g,''), key = clean.toLowerCase().replace(/'/g,'');
+  const clean = raw.replace(/[^A-Za-z']/g,''), key = clean.toLowerCase();
   if(!clean) return null;
-  if(FUNC.has(key)) return { text:raw, key, syl:syllabify(clean), stress:-1 };          // 虛詞：整個字都輕
-  const hit = ITEMS.find(it=>it.key===key);                                            // 實詞：先查字庫
-  if(hit) return { text:raw, key, syl:hit.syl, stress:hit.stress };
-  const syl = syllabify(clean);                                                        // 再用字典＋規則
-  return { text:raw, key, syl, stress:stressOf(clean,syl.length) };
+  if(ARTICLES.has(key)) return { text:raw, syl:[raw], r:'e', stress:-1, fn:true };   // 冠詞、主詞：一個八分音符（弱起拍）
+  const hit = ITEMS.find(it=>it.key===key);                                       // 實詞：先查字庫
+  if(hit) return { text:raw, syl:hit.syl, r:hit.r, stress:hit.stress, fn:false };
+  const syl = syllabify(clean);                                                   // 再用字典＋規則
+  const st = stressOf(clean,syl.length);
+  return { text:raw, syl, r:defRhythm(syl.length,key,st), stress:st, fn:false };
 }
 function sentenceItem(text){
-  const words = text.trim().split(/\s+/).map(wordPart).filter(Boolean);
-  if(!words.length) return null;
-  const st = stressTimed(words);
-  return { words, groups:st.groups, r:st.r, acc:st.acc, text:words.map(w=>w.text).join(' '), sentence:true };
+  const parts = text.trim().split(/\s+/).map(wordPart).filter(Boolean);
+  if(!parts.length) return null;
+  // 冠詞和主詞是弱起拍；湊不滿整拍就補一個八分休止符
+  for(let i=0; i<parts.length; ){
+    if(!parts[i].fn){ i++; continue; }
+    let j=i; while(j<parts.length && parts[j].fn) j++;
+    if((j-i)%2===1){
+      if(j<parts.length) parts[i].r = 'r'+parts[i].r;     // 後面還有實詞：休止符放在這組前面
+      else parts[j-1].r = parts[j-1].r+'r';                // 在句尾：休止符放在最後
+    }
+    i=j;
+  }
+  // 每個字先各自成一組（一拍）
+  const groups = parts.map(p=>({ syls: p.syl.map((t,i)=>({ t, w:p, i, str: !p.fn && i===p.stress })), r: p.r, lead: p.fn }));
+  // 兩個休止符碰在一起（例如 have ♪𝄾 ＋ a 𝄾♪）：兩個休止符都拿掉，
+  // 兩個八分音符連成一拍 ♫，句子就不會一直斷掉，下一個字還是落在拍點上
+  for(let k=0; k<groups.length-1; ){
+    const a=groups[k], b=groups[k+1];
+    if(a.r.endsWith('r') && b.r.startsWith('r'))
+      groups.splice(k, 2, { syls:[...a.syls, ...b.syls], r: a.r.slice(0,-1) + b.r.slice(1), lead:false });
+    else k++;
+  }
+  const acc = [];
+  groups.forEach((g,gi)=>{ if(gi>0) acc.push(false); let n=0;
+    [...g.r].forEach(k=>{ if(k==='r'){ acc.push(false); return; } const s=g.syls[n++]; acc.push(!!(s&&s.str)); }); });
+  return { parts, groups, r: groups.map(g=>g.r).join('|'), acc, text:parts.map(p=>p.text).join(' '), sentence:true };
 }
 /* 長度要在「按下播放的當下」才算，這樣調速度之後不用重打句子也會跟著變 */
 function sentenceDur(it){
   const beat = 60/BPM, dur = [];
-  it.groups.forEach((g,gi)=>{
-    if(gi>0) dur.push(0);
-    const arr=[...g.r], total=arr.reduce((a,k)=>a+BEATS[k],0)||1;
-    const scale = (ONEBEAT && !g.lead) ? 1/total : 1;   // 每一拍剛好一拍；弱起拍照自己的長度
+  if(it.groups){                                    // 每一組剛好一拍，弱起拍照自己的長度
+    it.groups.forEach((g,gi)=>{ if(gi>0) dur.push(0);
+      const arr=[...g.r], total=arr.reduce((a,k)=>a+BEATS[k],0)||1, scale=(ONEBEAT&&!g.lead)?1/total:1;
+      arr.forEach(k=>dur.push(BEATS[k]*scale*beat)); });
+    return dur;
+  }
+  if(it.leadRest) dur.push(BEATS.r*beat);
+  it.parts.forEach((p,i)=>{
+    if(i>0) dur.push(0);
+    const arr=[...p.r], total=arr.reduce((a,k)=>a+BEATS[k],0)||1;
+    const scale = (ONEBEAT && !p.fn) ? 1/total : 1;   // 每個字一拍，冠詞照自己的半拍
     arr.forEach(k=>dur.push(BEATS[k]*scale*beat));
   });
   return dur;
@@ -373,18 +380,72 @@ function sentenceDur(it){
 function sentenceCard(it, idx){
   const blocks = it.groups.map(g=>{
     const t = g.syls.map((s,k)=>{
-      const txt = s.str ? `<b>${s.t}</b>` : s.t;
-      const cont = s.i < s.w.syl.length-1;                  // 這個字還沒結束，用 - 接到下一個音節
+      let txt = s.str ? `<b>${s.t}</b>` : s.t;
+      if(s.w.fn) txt = `<span class="art">${txt}</span>`;           // 冠詞、主詞：淡色
+      const cont = s.i < s.w.syl.length-1;                           // 這個字還沒結束，用 - 接起來
       return txt + (cont ? '-' : (k===g.syls.length-1 ? '' : ' '));
     }).join('');
     return `<div class="sw${g.lead?' fn':''}">${notes(g.r)}<div class="t">${t}</div></div>`;
   }).join('');
-  return `<div class="card wide custom" style="background:#eef2ff">
+  const cap = it.natural ? '🗣️ 自然語調 Natural　·　一個重音一拍，輕音擠進拍子裡'
+                         : '🥁 節奏練習 Rhythm practice　·　每個字一拍，冠詞和主詞是弱起拍';
+  return `<div class="card wide custom" style="background:${it.natural?'#ecfdf5':'#eef2ff'}">
     <div class="sent">${blocks}</div>
-    <div class="cap">整句 Sentence　·　一個重音一拍，輕音擠進拍子裡</div>
+    <div class="cap">${cap}</div>
     <div class="btns"><button class="play" data-i="${idx}" data-a="r">▶ 節奏 Rhythm</button><button class="play" data-i="${idx}" data-a="w">🔊 發音 Say it</button></div>
   </div>`;
 }
+
+/* ===== 自然語調 Natural：一個重音一拍 ===========================================
+   切到「🗣️ 自然語調」時用這一套，比較像英文真正的唸法：
+   1. 重音音節落在拍點上：一個重音 = 一拍。
+   2. 兩個重音之間的輕音節全部擠進前一拍，不留多餘的休止符：
+      一拍裡 1 個音節 ♩（短母音的單音節字是 ♪𝄾）、2 個 ♫、3 個 ♪♬♬、4 個 ♬♬♬♬。
+   3. 第一個重音前面的輕音節是弱起拍，輕輕帶過：1 個 ♪、2 個 ♫、3 個 ♪♬♬。
+   4. 圖卡上的字（apple、orange…）自己成一拍時，照圖卡的節奏。
+   預設的「🥁 節奏練習」還是上面那套：一個字一拍。 */
+const GROUP_R = {1:'q', 2:'ee', 3:'ess', 4:'ssss'};
+const LEAD_R  = {1:'e', 2:'ee', 3:'ess', 4:'ssss'};
+const LIGHT = new Set([...FUNC].filter(w=>!['have','has','had','yes','no'].includes(w)));   // 自然語調裡不重讀的字
+function beatRhythm(syls){
+  const n = syls.length, w = syls[0].w;
+  if(syls.every(s=>s.w===w) && w.syl.length===n && META[w.key]) return META[w.key];
+  if(n===1) return (w.syl.length===1 && shortOne(w.key)) ? 'er' : 'q';
+  return GROUP_R[n] || 's'.repeat(n);
+}
+function stressTimed(words){
+  const S = [];
+  words.forEach(w => w.syl.forEach((t,i) => S.push({ t, w, i, str: w.stress===i })));
+  if(!S.length) return null;
+  if(!S.some(s=>s.str)){ const last=words[words.length-1], k=Math.max(0,last.stress); S.find(s=>s.w===last&&s.i===k).str=true; }
+  const first = S.findIndex(s=>s.str), groups = [];
+  if(first>0){ const lead=S.slice(0,first); groups.push({ syls:lead, r: LEAD_R[lead.length] || 's'.repeat(lead.length), lead:true }); }
+  for(let i=first; i<S.length; ){
+    let j=i+1; while(j<S.length && !S[j].str) j++;
+    const syls=S.slice(i,j); groups.push({ syls, r: beatRhythm(syls), lead:false }); i=j;
+  }
+  const acc = [];
+  groups.forEach((g,gi)=>{ if(gi>0) acc.push(false); let n=0;
+    [...g.r].forEach(k=>{ if(k==='r'){ acc.push(false); return; } const s=g.syls[n++]; acc.push(!!(s&&s.str)); }); });
+  return { r: groups.map(g=>g.r).join('|'), acc, groups };
+}
+function wordPartN(raw){
+  const clean = raw.replace(/[^A-Za-z']/g,''), key = clean.toLowerCase().replace(/'/g,'');
+  if(!clean) return null;
+  if(LIGHT.has(key)) return { text:raw, key, syl:syllabify(clean), stress:-1 };
+  const hit = ITEMS.find(it=>it.key===key);
+  if(hit) return { text:raw, key, syl:hit.syl, stress:hit.stress };
+  const syl = syllabify(clean);
+  return { text:raw, key, syl, stress:stressOf(clean,syl.length) };
+}
+function sentenceItemN(text){
+  const words = text.trim().split(/\s+/).map(wordPartN).filter(Boolean);
+  if(!words.length) return null;
+  const st = stressTimed(words);
+  return { words, groups:st.groups, r:st.r, acc:st.acc, text:words.map(w=>w.text).join(' '), sentence:true, natural:true };
+}
+let MODE = (()=>{ try{ return localStorage.getItem('rs2_mode')==='natural' ? 'natural' : 'practice'; }catch(e){ return 'practice'; } })();
+function makeSentence(text){ return MODE==='natural' ? sentenceItemN(text) : sentenceItem(text); }
 
 function cardHtml(raw, custom, idx){
   const it = withArticle(raw);
@@ -400,7 +461,7 @@ function render(){
   const sv = (sentEl ? sentEl.value : '').trim();
   if(!v&&!filterR&&!sv){ res.innerHTML='<p class="empty">打一句英文，就會排出整句的節奏。 Type a sentence to see its rhythm.</p>'; count.textContent=''; return; }
   // ⑤ 自己打的整句，最優先
-  if(sv){ const si=sentenceItem(sv); if(si){ shown.push(si); html+=sentenceCard(si,shown.length-1); } }
+  if(sv){ const si=makeSentence(sv); if(si){ shown.push(si); html+=sentenceCard(si,shown.length-1); } }
   let manual=null;
   if(v.includes('-')){ const c=parse(v); if(c.syl.every(Boolean)){ manual=c; shown.push(c); html+=cardHtml(c,true,0); } }   // 使用者自己用 - 分的音節
   const k=v.replace(/[-^]/g,'').toLowerCase().replace(/\s+/g,'');
@@ -419,7 +480,7 @@ function render(){
   if(!sv && head && (SUBJ || VERB)){
     const noun=head.word||head.syl.join('');
     const art = ARTICLE==='and' ? '' : (ARTICLE ? articleFor(noun) : '');
-    const si=sentenceItem([SUBJ, VERB, art, noun].filter(Boolean).join(' '));
+    const si=makeSentence([SUBJ, VERB, art, noun].filter(Boolean).join(' '));
     if(si){ shown.push(si); html+=sentenceCard(si,shown.length-1); }
   }
   list.forEach(it=>{ shown.push(it); html+=cardHtml(it,false,shown.length-1); });
@@ -461,6 +522,19 @@ let VERB = (()=>{ try{ const v=localStorage.getItem('rs2_verb'); return v===null
 res.addEventListener('click',e=>{ const b=e.target.closest('.play'); if(!b) return; const src=shown[+b.dataset.i];
   const it = src.sentence ? src : withArticle(src);
   if(b.dataset.a==='w') say(src.sentence ? src.text : (it.speak || src.word || src.syl.join(''))); else play(it); });
+/* 節奏方式切換：🥁 節奏練習（預設）／🗣️ 自然語調 */
+(function(){
+  const seg=document.getElementById('modeseg'), hint=document.getElementById('modehint');
+  if(!seg) return;
+  const HINT = {
+    practice:'🥁 每個字一拍，冠詞和主詞是弱起拍；兩個休止符碰在一起就拿掉，連成一拍。<br>Rhythm practice — one word, one beat; two rests side by side are removed and the notes join into one beat.',
+    natural:'🗣️ 重音踩在拍點上，輕音擠進拍子裡，聽起來像真的英文。<br>Natural speech — stressed syllables land on the beat; light syllables squeeze in.'
+  };
+  const paint=()=>{ seg.querySelectorAll('.seg').forEach(b=>b.setAttribute('aria-pressed', b.dataset.m===MODE)); if(hint) hint.innerHTML=HINT[MODE]; };
+  paint();
+  seg.addEventListener('click',e=>{ const b=e.target.closest('.seg'); if(!b) return;
+    MODE=b.dataset.m; paint(); try{ localStorage.setItem('rs2_mode',MODE); }catch(e){} render(); });
+})();
 render();
 </script>
 </body>
