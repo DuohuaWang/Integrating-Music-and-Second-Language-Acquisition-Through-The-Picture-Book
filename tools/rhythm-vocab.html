@@ -327,21 +327,21 @@ function withArticle(it){                 // 回傳「加好冠詞」的版本�
 }
 
 /* ===== 句子 Sentence ========================================================
-   英語是「重音計時」的語言：實詞（名詞、動詞、形容詞）各佔一拍，
-   虛詞（冠詞、代名詞、助動詞、介系詞）不重讀，每個是一個八分音符。
-   連在一起的虛詞合成一組「弱起拍」，帶進下一個實詞：
-   兩個虛詞剛好一拍（I am → ♪♪），單數個才補一個八分休止符（I → 𝄾♪），
-   這樣每個實詞都會落在正拍上。句尾的虛詞湊不滿一拍時，休止符補在後面。 */
+   規則：一個字一拍（四分音符）。字裡面的音節照單字規則分：
+   單音節長母音 ♩（cake、I）、單音節短母音 ♪𝄾（pear、am）、多音節照字典。
+   只有冠詞 a / an / the 是弱起拍（一個八分音符），帶進後面那個字；
+   冠詞湊不滿一拍時補一個八分休止符，讓每個字都落在正拍上。 */
 const FUNC = new Set(('a an the and or but so if as of in on at to for with from by '+
   'i you he she it we they me him her us them my your his its our their '+
   'is am are was were be been being do does did done has have had '+
   'will would can could shall should may might must '+
   'this that these those there here not no yes very too some any '+
   'through into onto after before than about around because while until since though although unless').split(' '));
+const ARTICLES = new Set(['a','an','the']);          // 只有冠詞是弱起拍，其他字都是一拍
 function wordPart(raw){
   const clean = raw.replace(/[^A-Za-z']/g,''), key = clean.toLowerCase();
   if(!clean) return null;
-  if(FUNC.has(key)) return { text:raw, syl:[raw], r:'e', stress:-1, fn:true };   // 虛詞：一個八分音符
+  if(ARTICLES.has(key)) return { text:raw, syl:[raw], r:'e', stress:-1, fn:true };   // 冠詞：一個八分音符（弱起拍）
   const hit = ITEMS.find(it=>it.key===key);                                       // 實詞：先查字庫
   if(hit) return { text:raw, syl:hit.syl, r:hit.r, stress:hit.stress, fn:false };
   const syl = syllabify(clean);                                                   // 再用字典＋規則
@@ -350,7 +350,7 @@ function wordPart(raw){
 function sentenceItem(text){
   const parts = text.trim().split(/\s+/).map(wordPart).filter(Boolean);
   if(!parts.length) return null;
-  // 連在一起的虛詞是一組弱起拍；個數是單數就補一個八分休止符，湊成整拍
+  // 冠詞是弱起拍；湊不滿整拍就補一個八分休止符
   for(let i=0; i<parts.length; ){
     if(!parts[i].fn){ i++; continue; }
     let j=i; while(j<parts.length && parts[j].fn) j++;
@@ -360,7 +360,7 @@ function sentenceItem(text){
     }
     i=j;
   }
-  const leadRest = false;                            // 休止符已經直接寫進各個虛詞的節奏裡
+  const leadRest = false;                            // 休止符已經直接寫進冠詞的節奏裡
   const r = parts.map(p=>p.r).join('|');
   // 重音位置和速度無關，先算好
   const acc = [];
@@ -381,7 +381,7 @@ function sentenceDur(it){
   it.parts.forEach((p,i)=>{
     if(i>0) dur.push(0);
     const arr=[...p.r], total=arr.reduce((a,k)=>a+BEATS[k],0)||1;
-    const scale = (ONEBEAT && !p.fn) ? 1/total : 1;   // 實詞各一拍，虛詞照自己的半拍
+    const scale = (ONEBEAT && !p.fn) ? 1/total : 1;   // 每個字一拍，冠詞照自己的半拍
     arr.forEach(k=>dur.push(BEATS[k]*scale*beat));
   });
   return dur;
@@ -394,7 +394,7 @@ function sentenceCard(it, idx){
   }).join('');
   return `<div class="card wide custom" style="background:#eef2ff">
     <div class="sent">${words}</div>
-    <div class="cap">整句 Sentence　·　實詞各一拍，虛詞是弱起拍</div>
+    <div class="cap">整句 Sentence　·　每個字一拍，冠詞是弱起拍</div>
     <div class="btns"><button class="play" data-i="${idx}" data-a="r">▶ 節奏 Rhythm</button><button class="play" data-i="${idx}" data-a="w">🔊 發音 Say it</button></div>
   </div>`;
 }
