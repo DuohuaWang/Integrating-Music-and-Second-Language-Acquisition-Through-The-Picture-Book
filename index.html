@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Music and Second Language Acquisition Through The Picture Book</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* minimal utility CSS (replaces the Tailwind CDN script) */
+*,::before,::after{box-sizing:border-box}
+h1,h2,h3,p,ul{margin:0}h1,h2,h3{font-size:inherit;font-weight:inherit}ul{padding:0;list-style:none}
+a{color:inherit;text-decoration:inherit}button{font:inherit}svg,img{display:block}
+.absolute{position:absolute}.relative{position:relative}.inset-0{inset:0}
+.flex{display:flex}.flex-col{flex-direction:column}.flex-1{flex:1 1 0%}.inline-block{display:inline-block}
+.grid{display:grid}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}
+.gap-2{gap:.5rem}.gap-6{gap:1.5rem}
+.mx-auto{margin-left:auto;margin-right:auto}
+.mt-1{margin-top:.25rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.mt-5{margin-top:1.25rem}.mt-6{margin-top:1.5rem}.mt-8{margin-top:2rem}.mb-1{margin-bottom:.25rem}
+.p-6{padding:1.5rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}
+.py-12{padding-top:3rem;padding-bottom:3rem}.py-16{padding-top:4rem;padding-bottom:4rem}.py-20{padding-top:5rem;padding-bottom:5rem}.pl-5{padding-left:1.25rem}
+.max-w-3xl{max-width:48rem}.max-w-4xl{max-width:56rem}.max-w-6xl{max-width:72rem}
+.overflow-hidden{overflow:hidden}.pointer-events-none{pointer-events:none}.select-none{user-select:none;-webkit-user-select:none}
+.list-disc{list-style-type:disc}.space-y-1>:not([hidden])~:not([hidden]){margin-top:.25rem}
+.text-center{text-align:center}.font-bold{font-weight:700}.font-medium{font-weight:500}
+.text-sm{font-size:.875rem;line-height:1.25rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-xl{font-size:1.25rem;line-height:1.75rem}
+.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}
+.leading-tight{line-height:1.25}.leading-relaxed{line-height:1.625}.leading-loose{line-height:2}
+.text-white{color:#fff}.text-gray-500{color:#6b7280}.text-gray-600{color:#4b5563}.text-yellow-200{color:#fde68a}
+@media (min-width:640px){.sm\:p-10{padding:2.5rem}.sm\:px-8{padding-left:2rem;padding-right:2rem}.sm\:py-20{padding-top:5rem;padding-bottom:5rem}.sm\:py-28{padding-top:7rem;padding-bottom:7rem}
+.sm\:text-2xl{font-size:1.5rem;line-height:2rem}.sm\:text-4xl{font-size:2.25rem;line-height:2.5rem}.sm\:text-5xl{font-size:3rem;line-height:1}}
+@media (min-width:768px){.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style>
+<style>
+  :root { color-scheme: light dark; --page:#f3f4f6; --ink:#1f2937; --muted:#4b5563; --nav-bg:rgba(255,255,255,.88); --nav-ink:#1f2937; --nav-hover:rgba(91,33,182,.08); --nav-on-bg:#5b21b6; --nav-on-ink:#fff; --nav-line:rgba(0,0,0,.08); box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --page:#111418; --ink:#e5e7eb; --muted:#9ca3af; --nav-bg:rgba(17,20,24,.85); --nav-ink:#e5e7eb; --nav-hover:rgba(255,255,255,.1); --nav-on-bg:#e9d5ff; --nav-on-ink:#111827; --nav-line:rgba(255,255,255,.1); } }
+  :root[data-theme="dark"]{ --page:#111418; --ink:#e5e7eb; --muted:#9ca3af; --nav-bg:rgba(17,20,24,.85); --nav-ink:#e5e7eb; --nav-hover:rgba(255,255,255,.1); --nav-on-bg:#e9d5ff; --nav-on-ink:#111827; --nav-line:rgba(255,255,255,.1); }
+  body{ margin:0; background:var(--page); color:var(--ink); font-family:"Poppins","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif; font-size:16px; line-height:1.75; letter-spacing:.01em; -webkit-font-smoothing:antialiased; }
+  h1,h2,h3{ font-family:"Poppins","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif; letter-spacing:.02em; line-height:1.3; }
+  .card h3{ font-size:1.15rem; font-weight:600; line-height:1.35; }
+  .card p{ line-height:1.7; letter-spacing:.015em; }
+  .hero{ position:relative; overflow:hidden; color:#fff; text-align:center; padding:5.5rem 1.5rem 9rem;
+    background:
+      radial-gradient(circle at 12% 25%, rgba(255,255,255,.12) 0 7rem, transparent 7.1rem),
+      radial-gradient(circle at 88% 72%, rgba(255,255,255,.10) 0 10rem, transparent 10.1rem),
+      linear-gradient(135deg,#4c1d95 0%,#0e7490 65%,#15803d 100%); }
+  .hero::before{ content:""; position:absolute; inset:0; background-image:radial-gradient(rgba(255,255,255,.22) 1.4px, transparent 1.5px); background-size:26px 26px; opacity:.45; pointer-events:none; }
+  .hero-in{ position:relative; max-width:52rem; margin:0 auto; }
+  .hero h1{ margin:0; font-size:clamp(1.8rem,5vw,3rem); font-weight:700; line-height:1.25; letter-spacing:.015em; }
+  .hero p{ margin:1.1rem 0 0; font-size:clamp(1.05rem,2.6vw,1.45rem); font-weight:500; letter-spacing:.06em; color:#fde68a; }
+  .wave{ position:absolute; left:0; bottom:-1px; width:100%; height:5rem; display:block; }
+  .wave path{ fill:var(--page); }
+  .floaters{ position:absolute; inset:0; pointer-events:none; user-select:none; -webkit-user-select:none; }
+  .fl{ position:absolute; line-height:1; opacity:.9; animation:bob 5s ease-in-out infinite; }
+  @keyframes bob{ 50%{ transform:translateY(-12px) rotate(6deg); } }
+  @media (prefers-reduced-motion: reduce){ .fl{ animation:none; } }
+  @media (max-width:600px){ .fl{ opacity:.6; } }
+  html{ scroll-padding-top:calc(env(safe-area-inset-top,0px) + 4rem); scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } }
+  .nav{ position:sticky; top:env(safe-area-inset-top,0px); z-index:50; background:var(--nav-bg); border-bottom:1px solid var(--nav-line); backdrop-filter:saturate(1.4) blur(10px); -webkit-backdrop-filter:saturate(1.4) blur(10px); }
+  body::before{ content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:60; background:var(--nav-bg); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
+  .nav ul{ display:flex; gap:.25rem; overflow-x:auto; max-width:72rem; margin:0 auto; padding:.45rem .75rem; list-style:none; scrollbar-width:none; }
+  .nav ul::-webkit-scrollbar{ display:none; }
+  @media (min-width:700px){ .nav ul{ justify-content:center; } }
+  .nav a{ display:block; white-space:nowrap; color:var(--nav-ink); padding:.5rem 1rem; border-radius:.5rem; font-size:.92rem; font-weight:500; letter-spacing:.03em; }
+  .nav a:hover{ background:var(--nav-hover); }
+  .nav a.on{ background:var(--nav-on-bg); color:var(--nav-on-ink); }
+  .nav a:focus-visible{ outline:3px solid #6aa84f; outline-offset:2px; }
+  .overview-grid{ display:grid; grid-template-columns:1fr; gap:1.5rem; }
+  @media (min-width:900px){ .overview-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
+  .blk{ margin-bottom:3.5rem; } .blk-t{ font-size:1.6rem; font-weight:600; margin:0 0 1.1rem; padding-left:.8rem; border-left:5px solid #6aa84f; }
+  .site-footer{ background:#0f172a; color:#cbd5e1; padding:3rem 1.5rem 1.5rem; margin-top:2rem; }
+  .foot-in{ max-width:72rem; margin:0 auto; display:grid; grid-template-columns:1fr; gap:1.8rem; }
+  @media (min-width:700px){ .foot-in{ grid-template-columns:1.6fr 1fr; gap:3rem; } }
+  .foot-t{ margin:0; font-size:1.1rem; font-weight:600; color:#fff; line-height:1.5; }
+  .foot-sub{ margin:.4rem 0 0; color:#fde68a; letter-spacing:.05em; }
+  .foot-h{ margin:0 0 .5rem; font-size:.8rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#94a3b8; }
+  .site-footer a{ color:#fff; text-decoration:underline; text-underline-offset:3px; word-break:break-all; }
+  .site-footer a:hover{ color:#fde68a; }
+  .site-footer a:focus-visible{ outline:3px solid #6aa84f; outline-offset:3px; }
+  .copy{ max-width:72rem; margin:2.2rem auto 0; padding-top:1.1rem; border-top:1px solid rgba(255,255,255,.14); font-size:.85rem; color:#94a3b8; text-align:center; }
+  .card{ background:#fff; color:#1f2937; border-radius:1rem; box-shadow:0 2px 10px rgba(0,0,0,.08); }
+  /* ---------- Want to say?：留言區 ---------- */
+  .say{ padding:1.8rem 1.5rem; }
+  @media (min-width:640px){ .say{ padding:2.2rem 2.4rem; } }
+  .say-lead{ margin:0 0 1.5rem; color:#374151; }
+  .say-en{ color:#6b7280; font-size:.95rem; }
+  .say-l{ display:block; font-weight:600; font-size:.95rem; margin:0 0 .4rem; color:#1f2937; }
+  .say-l .opt{ font-weight:400; color:#6b7280; font-size:.85rem; }
+  .say-in{ display:block; width:100%; font:inherit; font-size:1rem; color:#1f2937; background:#f9fafb;
+    border:2px solid #e5e7eb; border-radius:.7rem; padding:.7rem .9rem; margin:0 0 1.2rem; }
+  .say-in::placeholder{ color:#9ca3af; }
+  .say-in:focus{ outline:none; border-color:#6aa84f; background:#fff; box-shadow:0 0 0 4px rgba(106,168,79,.15); }
+  .say-ta{ resize:vertical; min-height:7.5rem; line-height:1.75; }
+  .say-row{ display:flex; flex-wrap:wrap; align-items:center; gap:.7rem; }
+  .say-btn{ display:inline-block; font:inherit; font-size:.98rem; font-weight:600; cursor:pointer;
+    border:2px solid #d1d5db; background:#fff; color:#374151; border-radius:999px; padding:.6rem 1.4rem;
+    text-decoration:none; transition:background .2s ease, border-color .2s ease, transform .2s ease; }
+  .say-btn:hover{ background:#f3f4f6; transform:translateY(-2px); }
+  .say-btn.primary{ background:#5b21b6; border-color:#5b21b6; color:#fff; }
+  .say-btn.primary:hover{ background:#4c1d95; }
+  .say-btn:focus-visible{ outline:3px solid #6aa84f; outline-offset:2px; }
+  .say-btn:disabled,.say-btn[aria-disabled="true"]{ opacity:.45; cursor:default; transform:none; }
+  .say-note{ font-size:.9rem; font-weight:600; color:#15803d; }
+  .say-foot{ margin:1.4rem 0 0; font-size:.88rem; color:#6b7280; line-height:1.8; }
+  .say-foot a{ color:#5b21b6; }
+  .lift{ transition:transform .25s ease, box-shadow .25s ease; }
+  .lift:hover,.lift:focus-within{ transform:translateY(-6px); box-shadow:0 16px 32px rgba(17,24,39,.18); }
+  @media (prefers-reduced-motion: reduce){ .lift{ transition:box-shadow .25s ease; } .lift:hover,.lift:focus-within{ transform:none; } }
+  .pill{ display:inline-flex; align-items:center; justify-content:center; padding:.5rem 1.3rem; border-radius:999px; background:#f3f4f6; color:#374151; border:1px solid #d1d5db; font-size:.88rem; font-weight:500; letter-spacing:.04em; line-height:1.2; text-decoration:none; transition:background-color .2s ease,color .2s ease,border-color .2s ease,box-shadow .2s ease,transform .2s ease; }
+  .pill:hover{ box-shadow:0 4px 10px rgba(0,0,0,.15); transform:translateY(-1px); }
+  .pill:active{ transform:translateY(0) scale(.97); }
+  .pill-en:hover{ background:#5b21b6; border-color:#5b21b6; color:#fff; }
+  .pill-zh:hover{ background:#15803d; border-color:#15803d; color:#fff; }
+  .pill-go:hover{ background:#111827; border-color:#111827; color:#fff; }
+  .pill:focus-visible{ outline:3px solid #6aa84f; outline-offset:2px; }
+  .go{ background:#e5e7eb; color:#374151; border-radius:.5rem; padding:.45rem 1.1rem; font-size:.9rem; font-weight:500; }
+  .go:hover{ background:#d1d5db; }
+  .go:focus-visible,.close:focus-visible{ outline:3px solid #6aa84f; outline-offset:2px; }
+  dialog{ border:0; padding:0; background:transparent; max-width:none; }
+  dialog::backdrop{ background:rgba(0,0,0,.6); }
+  .sheet{ background:#fff; color:#1f2937; border-radius:1rem; width:min(92vw,40rem); max-height:86vh; overflow:auto; }
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Sections">
+  <ul>
+    <li><a href="#sec-overview">Project Overview</a></li>
+    <li><a href="#sec-lessons">Lesson Plans</a></li>
+    <li><a href="#sec-tools">Interactive Tools</a></li>
+    <li><a href="#sec-files">Downloads</a></li>
+    <li><a href="#sec-say">Want to say?</a></li>
+  </ul>
+</nav>
+
+<header class="hero">
+  <div class="floaters" aria-hidden="true">
+    <span class="fl" style="left:8%;top:1.2rem;font-size:2.2rem;animation-delay:0">♪</span>
+    <span class="fl" style="left:30%;top:1.2rem;font-size:2rem;animation-delay:.8s">♫</span>
+    <span class="fl" style="left:50%;top:1.2rem;font-size:2.2rem;animation-delay:1.6s">🐛</span>
+    <span class="fl" style="left:70%;top:1.2rem;font-size:2rem;animation-delay:.4s">♪</span>
+    <span class="fl" style="left:90%;top:1.2rem;font-size:2.2rem;animation-delay:1.2s">🦋</span>
+    <span class="fl" style="left:18%;bottom:5.4rem;font-size:2rem;animation-delay:2s">♫</span>
+    <span class="fl" style="left:40%;bottom:5.4rem;font-size:2rem;animation-delay:.6s">♪</span>
+    <span class="fl" style="left:62%;bottom:5.4rem;font-size:2rem;animation-delay:1.8s">♫</span>
+    <span class="fl" style="left:82%;bottom:5.4rem;font-size:2rem;animation-delay:1s">♪</span>
+  </div>
+  <div class="hero-in">
+    <h1 id="hTitle">Integrating Music and Second Language Acquisition Through The Picture Book</h1>
+    <p id="hSub">The Very Hungry Caterpillar</p>
+  </div>
+  <svg class="wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
+    <path style="opacity:.35" d="M0,48 C180,90 420,10 720,44 C1020,78 1260,86 1440,30 L1440,90 L0,90 Z"/>
+    <path d="M0,66 C240,24 480,24 720,52 C960,80 1200,86 1440,50 L1440,90 L0,90 Z"/>
+  </svg>
+</header>
+
+<main class="max-w-6xl mx-auto px-5 sm:px-8 py-12">
+  <section id="sec-overview" class="blk"><h2 class="blk-t">Project Overview</h2><div id="gMot" class="overview-grid"></div></section>
+  <section id="sec-lessons" class="blk"><h2 class="blk-t">Lesson Plans</h2><div id="gLes" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div></section>
+  <section id="sec-tools" class="blk"><h2 class="blk-t">Interactive Tools</h2><div id="gTools" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div></section>
+  <section id="sec-files" class="blk"><h2 class="blk-t">Downloads</h2><div class="card p-6"><p class="text-gray-600">No files yet. 目前還沒有可下載的檔案。</p></div></section>
+
+  <section id="sec-say" class="blk">
+    <h2 class="blk-t">Want to say?</h2>
+    <div class="card say">
+      <p class="say-lead">看完有什麼想法嗎？不管是教學上的建議、帶孩子用過的心得，還是哪裡怪怪的，都很歡迎告訴我。<br>
+        <span class="say-en">Any thoughts? Feedback, questions, or something that didn't work for you — I'd love to hear it.</span></p>
+
+      <label class="say-l" for="sayName">你的名字 Your name <span class="opt">（選填 optional）</span></label>
+      <input id="sayName" class="say-in" type="text" maxlength="40" autocomplete="name" placeholder="例如：王老師 / Ms. Wang">
+
+      <label class="say-l" for="sayMsg">想說的話 Your message</label>
+      <textarea id="sayMsg" class="say-in say-ta" rows="5" maxlength="1200" placeholder="寫下任何想說的話…"></textarea>
+
+      <div class="say-row">
+        <a id="sayMail" class="say-btn primary" href="#">✉️ 寄給我 Send</a>
+        <button id="sayCopy" class="say-btn" type="button">📋 複製 Copy</button>
+        <span id="sayNote" class="say-note" role="status" aria-live="polite"></span>
+      </div>
+
+      <p class="say-foot">按「寄給我」會用你裝置上的信箱 App 開一封已經寫好的信，寄到
+        <a href="mailto:alice7220815@gmail.com">alice7220815@gmail.com</a>。<br>
+        沒有信箱 App 的話，按「複製」再貼到任何地方傳給我就可以了。</p>
+    </div>
+  </section>
+</main>
+<footer class="site-footer">
+  <div class="foot-in">
+    <div>
+      <h2 class="foot-t">Integrating Music and Second Language Acquisition Through The Picture Book</h2>
+      <p class="foot-sub">The Very Hungry Caterpillar</p>
+    </div>
+    <div>
+      <h3 class="foot-h">Contact</h3>
+      <a href="mailto:alice7220815@gmail.com">alice7220815@gmail.com</a>
+    </div>
+  </div>
+  <p class="copy">© 2026 Duo hua Wang. All rights reserved.</p>
+</footer>
+
+<script>
+const lessons = [
+ { tag:"Motivation", title:"Why this project?", e:"pages/motivation-en.html", c:"pages/motivation-zh.html",
+   intro:"A passion for music and language, plus real teaching experience, inspired a project that lets children learn happily." },
+ { tag:"教案一", title:"Class Plan｜教案", e:"pages/lesson1-en.html", c:"pages/lesson1-zh.html",
+   intro:"60 分鐘課程：用節奏和積木學食物單字的音節。" },
+ { tag:"教案二", title:"Class Plan 2｜從單字到句子", e:"pages/lesson2-en.html", c:"pages/lesson2-zh.html",
+   intro:"60 分鐘課程：接續教案一，加上冠詞與動詞，用弱起拍從單字走到整句。" },
+ { tag:"Lesson Plan Framework", title:"教案架構", e:"pages/framework-en.html", c:"pages/framework-zh.html",
+   intro:"The framework has four steps: Auditory Input, Hands-on Practice, Creative Output, and Story Integration." },
+ { tag:"Rhythm Finder · Vocab", title:"節奏查詢 · 單字（Starter）", u:"tools/rhythm-vocab.html",
+   intro:"輸入單字，查看音節分法、重音和節奏譜，可以聽節奏和發音，並加上冠詞 a / an。" },
+ { tag:"Rhythm Finder · Sentence", title:"節奏查詢 · 造句（Advanced）", u:"tools/rhythm-sentence.html",
+   intro:"加上主詞和動詞組成句子，或直接打一整句：實詞各一拍，虛詞是弱起拍。" },
+ { tag:"A very happy caterpillar", title:"Flash card", u:"tools/flashcards.html",
+   intro:"用你的六組圖卡翻卡複習：看圖、聽節奏、記音節，還可以標記和洗牌。" },
+ { tag:"Syllable Puzzle", title:"拼拼看！", u:"tools/puzzle.html",
+   intro:"把圖卡碎片拖進目標區拼成完整圖片，拼好會跳出鼓勵動畫並自動念出單字與節奏。" }
+];
+const gMot = document.getElementById('gMot'), gLes = document.getElementById('gLes'), gTools = document.getElementById('gTools');
+lessons.forEach(l => {
+  const el = document.createElement('article');
+  el.className = 'card lift p-6 flex flex-col';
+  el.innerHTML = `<h3 class="text-lg font-bold">${l.tag}</h3>
+    <p class="mt-1 text-sm text-gray-500">${l.title}</p>
+    <p class="mt-3 text-gray-600 leading-relaxed flex-1">${l.intro}</p>
+    <div class="mt-5 flex gap-2" style="flex-wrap:wrap"><a class="pill pill-en" href="${l.e}" target="_blank" rel="noopener" aria-label="English version">English</a><a class="pill pill-zh" href="${l.c}" target="_blank" rel="noopener" aria-label="中文版">中文</a></div>`;
+  if (l.u) el.querySelector('.flex').innerHTML = `<a class="pill pill-go" href="${l.u}" target="_blank" rel="noopener">Go</a>`;
+  (l.u ? gTools : ((l.tag === 'Motivation' || l.tag === 'Lesson Plan Framework') ? gMot : gLes)).appendChild(el);
+});
+/* ---------- Want to say?：把訪客寫的話變成一封寫好的信 ----------
+   靜態網頁沒有後端可以收訊息，所以這裡不「送出到伺服器」，
+   而是幫對方把信寫好、打開他自己的信箱 App；另外附一個「複製」鍵，
+   沒有信箱 App 的人可以貼到 LINE、IG 或任何地方傳給你。          */
+(function(){
+  const nameEl = document.getElementById('sayName');
+  const msgEl  = document.getElementById('sayMsg');
+  const mail   = document.getElementById('sayMail');
+  const copy   = document.getElementById('sayCopy');
+  const note   = document.getElementById('sayNote');
+  if(!nameEl || !msgEl || !mail || !copy) return;
+  const TO = 'alice7220815@gmail.com', KEY = 'vhc-say-draft';
+  let saveT, noteT;
+
+  // 草稿存在瀏覽器裡，不小心關掉分頁也不會整篇不見
+  try{ const d = JSON.parse(localStorage.getItem(KEY) || '{}');
+       if(d.n) nameEl.value = d.n;
+       if(d.m) msgEl.value  = d.m; }catch(e){}
+
+  const body = () => { const n = nameEl.value.trim();
+                       return msgEl.value.trim() + (n ? '\n\n— ' + n : ''); };
+
+  function sync(){
+    const m = msgEl.value.trim(), n = nameEl.value.trim();
+    const subj = 'Want to say — ' + (n || 'a message') + '（The Very Hungry Caterpillar）';
+    mail.href = 'mailto:' + TO + '?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent(body());
+    mail.setAttribute('aria-disabled', m ? 'false' : 'true');
+    copy.disabled = !m;
+    clearTimeout(saveT);
+    saveT = setTimeout(()=>{ try{ localStorage.setItem(KEY, JSON.stringify({ n:n, m:m })); }catch(e){} }, 400);
+  }
+  function flash(s){ note.textContent = s; clearTimeout(noteT);
+                     noteT = setTimeout(()=>{ note.textContent = ''; }, 3000); }
+
+  nameEl.addEventListener('input', sync);
+  msgEl .addEventListener('input', sync);
+  mail.addEventListener('click', e => {
+    if(!msgEl.value.trim()){ e.preventDefault(); msgEl.focus(); flash('先寫點什麼再寄喔！'); }
+    else flash('信箱開好了，按寄出就完成 🎉');
+  });
+  copy.addEventListener('click', async () => {
+    const text = body(); if(!text){ msgEl.focus(); return; }
+    try{ await navigator.clipboard.writeText(text); flash('複製好了，貼給我就可以 ✨'); }
+    catch(e){ msgEl.select(); flash('請用 Ctrl/⌘+C 複製'); }
+  });
+  sync();
+})();
+
+const navLinks = [...document.querySelectorAll('.nav a')];
+navLinks.forEach(a => a.addEventListener('click', e => {
+  e.preventDefault();
+  const t = document.querySelector(a.getAttribute('href'));
+  if (t) t.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+}));
+if ('IntersectionObserver' in window) {
+  const io = new IntersectionObserver(es => es.forEach(en => {
+    if (en.isIntersecting) navLinks.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + en.target.id));
+  }), { rootMargin: '-30% 0px -60% 0px' });
+  document.querySelectorAll('main section').forEach(sec => io.observe(sec));
+}
+</script>
+</body>
+</html>
