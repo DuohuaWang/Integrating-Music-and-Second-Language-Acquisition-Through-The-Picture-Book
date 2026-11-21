@@ -328,8 +328,10 @@ function withArticle(it){                 // 回傳「加好冠詞」的版本�
 
 /* ===== 句子 Sentence ========================================================
    英語是「重音計時」的語言：實詞（名詞、動詞、形容詞）各佔一拍，
-   虛詞（冠詞、代名詞、助動詞、介系詞）不重讀，用八分音符當弱起拍。
-   句子開頭如果是虛詞，前面會補一個八分休止符，讓第一拍落在實詞上。 */
+   虛詞（冠詞、代名詞、助動詞、介系詞）不重讀，每個是一個八分音符。
+   連在一起的虛詞合成一組「弱起拍」，帶進下一個實詞：
+   兩個虛詞剛好一拍（I am → ♪♪），單數個才補一個八分休止符（I → 𝄾♪），
+   這樣每個實詞都會落在正拍上。句尾的虛詞湊不滿一拍時，休止符補在後面。 */
 const FUNC = new Set(('a an the and or but so if as of in on at to for with from by '+
   'i you he she it we they me him her us them my your his its our their '+
   'is am are was were be been being do does did done has have had '+
@@ -348,8 +350,18 @@ function wordPart(raw){
 function sentenceItem(text){
   const parts = text.trim().split(/\s+/).map(wordPart).filter(Boolean);
   if(!parts.length) return null;
-  const leadRest = parts[0].fn;                      // 開頭是虛詞 → 補一個休止符當弱起拍
-  const r = (leadRest?'r':'') + parts.map(p=>p.r).join('|');
+  // 連在一起的虛詞是一組弱起拍；個數是單數就補一個八分休止符，湊成整拍
+  for(let i=0; i<parts.length; ){
+    if(!parts[i].fn){ i++; continue; }
+    let j=i; while(j<parts.length && parts[j].fn) j++;
+    if((j-i)%2===1){
+      if(j<parts.length) parts[i].r = 'r'+parts[i].r;     // 後面還有實詞：休止符放在這組前面
+      else parts[j-1].r = parts[j-1].r+'r';                // 在句尾：休止符放在最後
+    }
+    i=j;
+  }
+  const leadRest = false;                            // 休止符已經直接寫進各個虛詞的節奏裡
+  const r = parts.map(p=>p.r).join('|');
   // 重音位置和速度無關，先算好
   const acc = [];
   if(leadRest) acc.push(false);
