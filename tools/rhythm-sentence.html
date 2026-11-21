@@ -124,12 +124,22 @@ function shortOne(w){
   const long=/[aeiou][^aeiouy]e$/.test(w)||/(ai|ay|ee|ea|oa|ou|ow|oo|oi|oy|ie|ue|ui|au|aw|igh|eau)/.test(w)||/[aeiouy]r/.test(w)||/[aeiouy]$/.test(w);
   return !long;
 }
-function defRhythm(n,word){ return n===1 ? (shortOne(word||'')?'er':'q') : 'e'.repeat(n); }
+/* 一個字一拍。多音節的字依「重音在第幾個音節」分配，重音音節永遠拿最長的音：
+   2 音節：重音在前 ♫（A-pple），重音在後 ♬♪.（gui-TAR）
+   3 音節：重音第 1 個 ♪♬♬（CHOC-o-late）、第 2 個 ♬♪♬（com-PU-ter）、第 3 個 ♬♬♪（kan-ga-ROO）
+   4 音節以上：全部十六分音符，重音用粗體標示 */
+function defRhythm(n,word,stress){
+  stress = stress||0;
+  if(n===1) return shortOne(word||'') ? 'er' : 'q';
+  if(n===2) return stress===1 ? 'sd' : 'ee';
+  if(n===3) return ['ess','ses','sse'][Math.min(stress,2)];
+  return 's'.repeat(n);
+}
 function parse(w){
   const parts = w.split('-'); let stress = 0;
   const syl = parts.map((p,i)=>{ if(p.startsWith('^')){ stress=i; p=p.slice(1);} return p.replace(/~/g,' '); });
   const key = syl.join('').toLowerCase().replace(/\s+/g,'');
-  return { syl, stress, key, r: META[key] || defRhythm(syl.length,key), bg: PICS[key]?PICS[key].bg:'#f6d092', img: PICS[key]?PICS[key].src:'', emoji: EMO[key]||'' };
+  return { syl, stress, key, r: META[key] || defRhythm(syl.length,key,stress), bg: PICS[key]?PICS[key].bg:'#f6d092', img: PICS[key]?PICS[key].src:'', emoji: EMO[key]||'' };
 }
 const ITEMS = WORDS.map(parse);
 
@@ -251,7 +261,7 @@ function syllabifyRule(word){
 function autoItem(v){
   const syl=[]; v.split(/\s+/).filter(Boolean).forEach(x=>syl.push(...syllabify(x)));
   if(!syl.length) return null;
-  return { word:v, syl, stress:(v.trim().split(/\s+/).length===1?stressOf(v,syl.length):0), key:'', r:defRhythm(syl.length,syl.join('')), bg:'#f6d092', img:'', emoji:'', cap:'自動辨識 Auto-detected' };
+  return { word:v, syl, stress:(v.trim().split(/\s+/).length===1?stressOf(v,syl.length):0), key:'', r:defRhythm(syl.length,syl.join(''),(v.trim().split(/\s+/).length===1?stressOf(v,syl.length):0)), bg:'#f6d092', img:'', emoji:'', cap:'自動辨識 Auto-detected' };
 }
 let filterR = '';
 const chips=document.getElementById('chips'), res=document.getElementById('results'), q=document.getElementById('q'), count=document.getElementById('count');
@@ -314,7 +324,8 @@ function wordPart(raw){
   const hit = ITEMS.find(it=>it.key===key);                                       // 實詞：先查字庫
   if(hit) return { text:raw, syl:hit.syl, r:hit.r, stress:hit.stress, fn:false };
   const syl = syllabify(clean);                                                   // 再用字典＋規則
-  return { text:raw, syl, r:defRhythm(syl.length,key), stress:stressOf(clean,syl.length), fn:false };
+  const st = stressOf(clean,syl.length);
+  return { text:raw, syl, r:defRhythm(syl.length,key,st), stress:st, fn:false };
 }
 function sentenceItem(text){
   const parts = text.trim().split(/\s+/).map(wordPart).filter(Boolean);
