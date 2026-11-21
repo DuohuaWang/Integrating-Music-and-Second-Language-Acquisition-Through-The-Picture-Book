@@ -166,7 +166,8 @@ function notes(r){
       for(let k=i;k<=j;k++){ if(T[k]!=='s') continue;
         if(k<j&&T[k+1]==='s') s+=`<rect x="${pos[k]+12}" y="28" width="${pos[k+1]-pos[k]+3.5}" height="6" fill="#000"/>`;
         else if(!(k>i&&T[k-1]==='s')) s+= k>i ? `<rect x="${pos[k]-2}" y="28" width="14.5" height="6" fill="#000"/>` : `<rect x="${pos[k]+12}" y="28" width="14" height="6" fill="#000"/>`; }
-    } else if(T[i]==='e'||T[i]==='d'){ const x0=pos[i]+12; s+=`<path d="M${x0} 14 C${x0+4} 24 ${x0+22} 30 ${x0+16} 52 C${x0+16} 40 ${x0+6} 36 ${x0} 34 Z" fill="#000"/>`; }
+    } else if(T[i]==='e'||T[i]==='d'||T[i]==='s'){ const x0=pos[i]+12; s+=`<path d="M${x0} 14 C${x0+4} 24 ${x0+22} 30 ${x0+16} 52 C${x0+16} 40 ${x0+6} 36 ${x0} 34 Z" fill="#000"/>`;
+      if(T[i]==='s') s+=`<path d="M${x0} 28 C${x0+4} 38 ${x0+22} 44 ${x0+16} 66 C${x0+16} 54 ${x0+6} 50 ${x0} 48 Z" fill="#000"/>`; }   // 單獨的十六分音符：兩條符尾
     i=j+1;
   }
   return s+'</svg>';

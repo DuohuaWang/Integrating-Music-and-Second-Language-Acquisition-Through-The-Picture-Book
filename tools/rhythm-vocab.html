@@ -195,7 +195,8 @@ function notes(r){
       for(let k=i;k<=j;k++){ if(T[k]!=='s') continue;
         if(k<j&&T[k+1]==='s') s+=`<rect x="${pos[k]+12}" y="28" width="${pos[k+1]-pos[k]+3.5}" height="6" fill="#000"/>`;
         else if(!(k>i&&T[k-1]==='s')) s+= k>i ? `<rect x="${pos[k]-2}" y="28" width="14.5" height="6" fill="#000"/>` : `<rect x="${pos[k]+12}" y="28" width="14" height="6" fill="#000"/>`; }
-    } else if(T[i]==='e'||T[i]==='d'){ const x0=pos[i]+12; s+=`<path d="M${x0} 14 C${x0+4} 24 ${x0+22} 30 ${x0+16} 52 C${x0+16} 40 ${x0+6} 36 ${x0} 34 Z" fill="#000"/>`; }
+    } else if(T[i]==='e'||T[i]==='d'||T[i]==='s'){ const x0=pos[i]+12; s+=`<path d="M${x0} 14 C${x0+4} 24 ${x0+22} 30 ${x0+16} 52 C${x0+16} 40 ${x0+6} 36 ${x0} 34 Z" fill="#000"/>`;
+      if(T[i]==='s') s+=`<path d="M${x0} 28 C${x0+4} 38 ${x0+22} 44 ${x0+16} 66 C${x0+16} 54 ${x0+6} 50 ${x0} 48 Z" fill="#000"/>`; }   // 單獨的十六分音符：兩條符尾
     i=j+1;
   }
   return s+'</svg>';
@@ -309,7 +310,7 @@ q.addEventListener('input',render);
 
 /* ===== 冠詞 Article ==========================================================
    ARTICLE = ''（不加）、'auto'（自動選 a 或 an）、'and'、'the'。
-   加上去之後，節奏前面會多 'r'（八分休止）+ 'e'（冠詞，八分音符）+ '|'（間隔），
+   加上去之後，節奏前面會多 's'（冠詞，一律是十六分音符）+ '|'（間隔），
    重音位置往後移一個，所以念起來重音還是在名詞上。 */
 let ARTICLE = (()=>{ try{ return localStorage.getItem('rs_article') || ''; }catch(e){ return ''; } })();
 const AN_YES = ['hour','honest','honour','honor','heir','mp3','fbi'];          // 字首是子音字母，但發母音
@@ -327,8 +328,8 @@ function withArticle(it){                 // 回傳「加好冠詞」的版本�
   const art = articleFor(it.word || it.syl.join(''));
   if(!art) return it;
   return Object.assign({}, it, {
-    r: 're|' + it.r,                      // 八分休止 + 冠詞 + 間隔 + 原本的節奏
-    lead: 3,                              // 前三個符號是弱起拍
+    r: 's|' + it.r,                       // 冠詞一律是十六分音符（弱起拍）+ 間隔 + 原本的節奏
+    lead: 2,                              // 前兩個符號是弱起拍
     stress: it.stress + 1,                // 重音跟著往後移
     syl: [art, ...it.syl],
     artCount: 1,                          // 開頭第幾個音節是冠詞（顯示時用淡色）
