@@ -180,15 +180,19 @@ function notes(r){
 function notesL(r, lyr){
   const T=[...r], FS=34, esc=x=>String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;');
   let k=0;
-  const L=T.map(t=>(t==='r'||t==='|') ? null : (lyr[k++]||{t:''}));
+  const L=T.map(t=>('rut|'.includes(t)) ? null : (lyr[k++]||{t:''}));
   const W=L.map(l=>l ? (l.t.length + (l.h?1:0)) * FS * .5 : 0);              // 字大約多寬
-  const base=t=> t==='|'?16:(t==='r'?34:(t==='d'?54:44));
+  const base=t=> t==='|'?16:(t==='r'||t==='t'?34:(t==='d'||t==='u'?54:44));
   const pos=[]; T.forEach((t,i)=>{ pos.push(i===0 ? Math.max(24, W[0]/2+6) : pos[i-1] + Math.max(base(T[i-1]), W[i-1]/2 + W[i]/2 + 10)); });
   const end = pos[pos.length-1] + Math.max(36, W[W.length-1]/2 + 6);
   let s=`<svg class="lyr" viewBox="0 0 ${end} 144" aria-hidden="true">`;
   T.forEach((t,i)=>{ const cx=pos[i];
     if(t==='|'){}
-    else if(t==='r'){ s+=`<circle cx="${cx+3}" cy="42" r="6.5" fill="#000"/><path d="M${cx+3} 40 Q${cx+16} 40 ${cx+16} 30 M${cx+16} 30 L${cx+2} 72" stroke="#000" stroke-width="4" fill="none" stroke-linecap="round"/>`; }
+    else if('rut'.includes(t)){                       // 休止符：八分（r）、附點八分（u）、十六分（t）
+      s+=`<circle cx="${cx+3}" cy="42" r="6.5" fill="#000"/><path d="M${cx+3} 40 Q${cx+16} 40 ${cx+16} 30 M${cx+16} 30 L${cx+2} 72" stroke="#000" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+      if(t==='u') s+=`<circle cx="${cx+27}" cy="44" r="4.5" fill="#000"/>`;
+      if(t==='t') s+=`<circle cx="${cx-1}" cy="58" r="6.5" fill="#000"/><path d="M${cx-1} 56 Q${cx+11} 56 ${cx+12} 46" stroke="#000" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+    }
     else { s+=`<ellipse cx="${cx}" cy="76" rx="15" ry="10.5" transform="rotate(-22 ${cx} 76)" fill="#000"/><rect x="${cx+12}" y="14" width="3.5" height="62" fill="#000"/>`;
       if(t==='d') s+=`<circle cx="${cx+25}" cy="76" r="4.5" fill="#000"/>`;
       const l=L[i]; if(l&&l.t) s+=`<text x="${cx}" y="132" font-size="${FS}" text-anchor="middle" font-family="Times New Roman,Times,serif" font-weight="${l.b?700:400}" font-style="${l.f?'italic':'normal'}" fill="${l.f?'#6b7280':'#000'}">${esc(l.t)}${l.h?'-':''}</text>`;
@@ -228,7 +232,7 @@ try{ speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged=()=>speechSynt
              所以三音節的字會變成一拍三連音，四音節變成一拍四個音。
    ONEBEAT = false 時就照音符本身的長度走。
    BPM：每分鐘幾拍，使用者可以自己拉。 */
-const BEATS = {q:1, d:.75, e:.5, s:.25, r:.5, '|':0};
+const BEATS = {q:1, d:.75, e:.5, s:.25, r:.5, u:.75, t:.25, '|':0};   // r 八分休止、u 附點八分休止、t 十六分休止
 let BPM = (()=>{ try{ return +localStorage.getItem('rs_bpm') || 90; }catch(e){ return 90; } })();
 let ONEBEAT = (()=>{ try{ return localStorage.getItem('rs_onebeat') !== '0'; }catch(e){ return true; } })();
 function timing(r, lead){                 // 算出這個節奏每個音符要響多久（秒）
@@ -246,7 +250,7 @@ function play(it){
   const arr=[...it.r], dur = it.sentence ? sentenceDur(it) : timing(it.r, it.lead);
   let t=ctx.currentTime+.05, n=0;
   arr.forEach((k,i)=>{ const d=dur[i];
-    if(k!=='r' && k!=='|'){
+    if(!'rut|'.includes(k)){
       const o=ctx.createOscillator(), g=ctx.createGain();
       const st = it.acc ? !!it.acc[i] : (n===it.stress); n++;
       o.type='triangle'; o.frequency.value= st?660:440;
@@ -439,7 +443,8 @@ function sentenceCard(it, idx){
    2. 兩個重音之間的輕音節全部擠進前一拍，不留多餘的休止符：
       輕音一律是十六分音符，重音拿這一拍剩下的長度：
       一拍裡 1 個音節 ♩（短母音的單音節字是 ♪𝄾）、2 個 ♪.♬（PU-ter、ate a）、3 個 ♪♬♬、4 個 ♬♬♬♬。
-   3. 第一個重音前面的輕音節是弱起拍，輕輕帶過：每個輕音都是十六分音符。
+   3. 第一個重音前面的輕音節是弱起拍：每個輕音都是十六分音符，前面補休止符湊滿一整拍
+      （1 個：附點八分休止＋♬；2 個：八分休止＋♬♬；3 個：十六分休止＋♬♬♬）。
    4. 圖卡上的字（apple、orange…）自己成一拍時，照圖卡的節奏。
    預設的「🥁 節奏練習」還是上面那套：一個字一拍。 */
 const GROUP_R = {1:'q', 2:'ee', 3:'ess', 4:'ssss'};
@@ -458,14 +463,14 @@ function stressTimed(words){
   if(!S.length) return null;
   if(!S.some(s=>s.str)){ const last=words[words.length-1], k=Math.max(0,last.stress); S.find(s=>s.w===last&&s.i===k).str=true; }
   const first = S.findIndex(s=>s.str), groups = [];
-  if(first>0){ const lead=S.slice(0,first); groups.push({ syls:lead, r: 's'.repeat(lead.length), lead:true }); }
+  if(first>0){ const lead=S.slice(0,first); groups.push({ syls:lead, r: ({1:'u',2:'r',3:'t'}[lead.length%4]||'') + 's'.repeat(lead.length), lead:true }); }   // 前面補休止符，湊滿一整拍
   for(let i=first; i<S.length; ){
     let j=i+1; while(j<S.length && !S[j].str) j++;
     const syls=S.slice(i,j); groups.push({ syls, r: beatRhythm(syls), lead:false }); i=j;
   }
   const acc = [];
   groups.forEach((g,gi)=>{ if(gi>0) acc.push(false); let n=0;
-    [...g.r].forEach(k=>{ if(k==='r'){ acc.push(false); return; } const s=g.syls[n++]; acc.push(!!(s&&s.str)); }); });
+    [...g.r].forEach(k=>{ if('rut'.includes(k)){ acc.push(false); return; } const s=g.syls[n++]; acc.push(!!(s&&s.str)); }); });
   return { r: groups.map(g=>g.r).join('|'), acc, groups };
 }
 function wordPartN(raw){
