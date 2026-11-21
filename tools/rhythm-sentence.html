@@ -346,13 +346,16 @@ function sentenceItem(text){
   }
   // 每個字先各自成一組（一拍）
   const groups = parts.map(p=>({ syls: p.syl.map((t,i)=>({ t, w:p, i, str: !p.fn && i===p.stress })), r: p.r, lead: p.fn }));
-  // 兩個休止符碰在一起（例如 have ♪𝄾 ＋ a 𝄾♪）：兩個休止符都拿掉，
-  // 兩個八分音符連成一拍 ♫，句子就不會一直斷掉，下一個字還是落在拍點上
+  // 兩個休止符碰在一起（例如 have ♪𝄾 ＋ a 𝄾♪）：兩個休止符都拿掉，連成一拍。
+  // 前面的字比較重、要比較長，所以變成「附點八分＋十六分」♪.♬（have 長、a 短），
+  // 句子就不會一直斷掉，下一個字還是落在拍點上
   for(let k=0; k<groups.length-1; ){
     const a=groups[k], b=groups[k+1];
-    if(a.r.endsWith('r') && b.r.startsWith('r'))
-      groups.splice(k, 2, { syls:[...a.syls, ...b.syls], r: a.r.slice(0,-1) + b.r.slice(1), lead:false });
-    else k++;
+    if(a.r.endsWith('r') && b.r.startsWith('r')){
+      const A=a.r.slice(0,-1), B=b.r.slice(1);
+      const r = (A.endsWith('e') && B.startsWith('e')) ? A.slice(0,-1)+'ds'+B.slice(1) : A+B;
+      groups.splice(k, 2, { syls:[...a.syls, ...b.syls], r, lead:false });
+    } else k++;
   }
   const acc = [];
   groups.forEach((g,gi)=>{ if(gi>0) acc.push(false); let n=0;
@@ -527,7 +530,7 @@ res.addEventListener('click',e=>{ const b=e.target.closest('.play'); if(!b) retu
   const seg=document.getElementById('modeseg'), hint=document.getElementById('modehint');
   if(!seg) return;
   const HINT = {
-    practice:'🥁 每個字一拍，冠詞和主詞是弱起拍；兩個休止符碰在一起就拿掉，連成一拍。<br>Rhythm practice — one word, one beat; two rests side by side are removed and the notes join into one beat.',
+    practice:'🥁 每個字一拍，冠詞和主詞是弱起拍；兩個休止符碰在一起就拿掉，連成一拍（重的長、輕的短）。<br>Rhythm practice — one word, one beat; when two rests meet, they are removed and the notes join into one beat, long–short.',
     natural:'🗣️ 重音踩在拍點上，輕音擠進拍子裡，聽起來像真的英文。<br>Natural speech — stressed syllables land on the beat; light syllables squeeze in.'
   };
   const paint=()=>{ seg.querySelectorAll('.seg').forEach(b=>b.setAttribute('aria-pressed', b.dataset.m===MODE)); if(hint) hint.innerHTML=HINT[MODE]; };
