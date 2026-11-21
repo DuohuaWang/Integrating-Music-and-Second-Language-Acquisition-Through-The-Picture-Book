@@ -403,7 +403,7 @@ function sentenceCard(it, idx){
    切到「🗣️ 自然語調」時用這一套，比較像英文真正的唸法：
    1. 重音音節落在拍點上：一個重音 = 一拍。
    2. 兩個重音之間的輕音節全部擠進前一拍，不留多餘的休止符：
-      一拍裡 1 個音節 ♩（短母音的單音節字是 ♪𝄾）、2 個 ♫、3 個 ♪♬♬、4 個 ♬♬♬♬。
+      一拍裡 1 個音節 ♩（短母音的單音節字是 ♪𝄾）、2 個 ♫（重的字＋輕的字是 ♪.♬，例如 ate a）、3 個 ♪♬♬、4 個 ♬♬♬♬。
    3. 第一個重音前面的輕音節是弱起拍，輕輕帶過：1 個 ♪、2 個 ♫、3 個 ♪♬♬。
    4. 圖卡上的字（apple、orange…）自己成一拍時，照圖卡的節奏。
    預設的「🥁 節奏練習」還是上面那套：一個字一拍。 */
@@ -414,6 +414,7 @@ function beatRhythm(syls){
   const n = syls.length, w = syls[0].w;
   if(syls.every(s=>s.w===w) && w.syl.length===n && META[w.key]) return META[w.key];
   if(n===1) return (w.syl.length===1 && shortOne(w.key)) ? 'er' : 'q';
+  if(n===2 && syls[1].w!==w) return 'ds';     // 重的字＋擠進來的輕字（ate a）：前長後短 ♪.♬，跟節奏練習一樣
   return GROUP_R[n] || 's'.repeat(n);
 }
 function stressTimed(words){
